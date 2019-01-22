@@ -1,0 +1,82 @@
+<div class="container">
+
+  <h1>Crédito </h1>
+
+  <form [formGroup]="riskForm" #formDir="ngForm">
+
+    <div [hidden]="formDir.submitted">
+
+      <div class="cross-validation" [class.cross-validation-error]="riskForm.errors?.identityRevealed && (riskForm.touched || riskForm.dirty)">
+        <div class="form-group">
+
+          <label for="nameClient">Nome do Cliente</label>
+          <input id="nameClient" class="form-control"
+                formControlName="nameClient" required >
+
+          <div *ngIf="nameClient.invalid && (nameClient.dirty || nameClient.touched)"
+              class="alert alert-danger">
+
+            <div *ngIf="nameClient.errors.required">
+              Name is required.
+            </div>
+            <div *ngIf="nameClient.errors.minlength">
+              Name must be at least 4 characters long.
+            </div>
+            <div *ngIf="nameClient.errors.forbiddenName">
+              Nome do cliente não pode ser Bob.
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="creditLimit">Limite de crédito</label>
+          <input currencyMask id="creditLimit" class="form-control"
+          formControlName="creditLimit" [options]="{ prefix: 'R$ ', thousands: '.', decimal: ',' }"/>
+
+          <div *ngIf="creditLimit.pending">Validating...</div>
+          <div *ngIf="creditLimit.invalid" class="alert alert-danger alter-ego-errors">
+          </div>
+        </div>
+
+        <div *ngIf="riskForm.errors?.identityRevealed && (riskForm.touched || riskForm.dirty)" class="cross-validation-error-message alert alert-danger">
+            Número inválido.
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="typeRisk">Risco</label>
+        <select id="typeRisk" class="form-control"
+            formControlName="typeRisk" required >
+          <option *ngFor="let p of powers" [value]="p">{{p}}</option>
+        </select>
+
+        <div *ngIf="typeRisk.invalid && typeRisk.touched" class="alert alert-danger">
+          <div *ngIf="typeRisk.errors.required">Power is required.</div>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-default" (click)="save()"
+             [disabled]="riskForm.invalid">Submit</button>
+      <button type="button" class="btn btn-default"
+             (click)="formDir.resetForm({})">Reset</button>
+    </div>
+  </form>
+
+  <div class="submitted-message" *ngIf="formDir.submitted">
+    <p>You've submitted your hero, {{ riskForm.value.nameClient }}!</p>
+    <button (click)="formDir.resetForm({})">Adicionar outro cliente</button>
+  </div>
+</div>
+
+<div>
+  <h2>Clientes</h2>
+  <ul class="risk">
+    <li *ngFor="let r of clientsRiks"
+      [class.selected]="r === selectedRisk"
+      (click)="onSelect(r)">
+        <div style="width:500px">
+          <span class="badge">{{r.id}}</span> {{r.clientName}} {{r.interestApplied}}
+        </div> 
+    </li>
+  </ul>
+</div>
